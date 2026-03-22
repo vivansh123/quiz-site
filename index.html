@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE Quiz Master - Class 9-11</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #6366f1;
+            --gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--gradient);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .nav-btn {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .nav-btn:hover, .nav-btn.active {
+            background: white;
+            color: #4f46e5;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .section {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.95);
+            color: #1e2937;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .question-card {
+            min-height: 420px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option-btn {
+            padding: 18px 25px;
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--primary);
+            transform: scale(1.03);
+        }
+        
+        .option-btn.selected {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ef4444;
+            text-align: center;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .progress-container {
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #22c55e, #eab308);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        button {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 25px rgba(99,102,241,0.4);
+        }
+        
+        .result {
+            text-align: center;
+        }
+        
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(#22c55e var(--score), #ef4444 0);
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+        }
+        
+        .score-circle::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: #1e2937;
+            border-radius: 50%;
+        }
+        
+        .score-text {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard-table th, .leaderboard-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .leaderboard-table tr:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .mindmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .accordion {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .accordion summary {
+            padding: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+        }
+        
+        .flash-red {
+            animation: flashRed 0.6s;
+        }
+        
+        @keyframes flashRed {
+            0% { background: rgba(239, 68, 68, 0.6); }
+            100% { background: transparent; }
+        }
+        
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>CBSE Quiz Master</h1>
+            <p style="font-size: 1.3rem; margin-top: 10px; opacity: 0.9;">Real CBSE-Level Questions • Class 9 • 10 • 11</p>
+        </header>
+
+        <!-- NAV -->
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('home')">🏠 Home</button>
+            <button class="nav-btn" onclick="showSection('quiz')">📝 Start Quiz</button>
+            <button class="nav-btn" onclick="showSection('mindmaps')">🧠 Mind Maps</button>
+            <button class="nav-btn" onclick="showSection('leaderboard')">🏆 Leaderboard</button>
+        </div>
+
+        <!-- HOME SECTION -->
+        <div id="home" class="section active">
+            <div class="card" style="text-align:center;">
+                <h2 style="font-size:2.5rem; margin-bottom:20px;">Welcome to CBSE Quiz Master</h2>
+                <p style="font-size:1.3rem; max-width:700px; margin:0 auto 30px;">Real CBSE MCQs for Physics, Chemistry, Biology & Maths<br>Timer • Shuffle • Sound Effects • Confetti • Leaderboard</p>
+                
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-top:40px;">
+                    <div onclick="startQuickQuiz(9)" class="card" style="cursor:pointer; text-align:center; padding:30px;">
+                        <div style="font-size:4rem; margin-bottom:15px;">9️⃣</div>
+                        <h3>Class 9</h3>
+                        <p>80+ Real MCQs</p>
+                    </div>
+                    <div onclick="startQuickQuiz(10)" class="card" style="cursor:pointer; text-align:center; padding:30px;">
+                        <div style="font-size:4rem; margin-bottom:15px;">🔟</div>
+                        <h3>Class 10</h3>
+                        <p>80+ Real MCQs</p>
+                    </div>
+                    <div onclick="startQuickQuiz(11)" class="card" style="cursor:pointer; text-align:center; padding:30px;">
+                        <div style="font-size:4rem; margin-bottom:15px;">1️⃣1️⃣</div>
+                        <h3>Class 11</h3>
+                        <p>80+ Real MCQs</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUIZ SECTION -->
+        <div id="quiz" class="section">
+            <div id="quiz-setup" class="card">
+                <h2 style="margin-bottom:30px; text-align:center;">Select Class & Subject</h2>
+                <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+                    <select id="class-select" style="padding:15px 25px; font-size:1.2rem; border-radius:15px; background:rgba(255,255,255,0.9); color:#1e2937; border:none;">
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                        <option value="11">Class 11</option>
+                    </select>
+                    <select id="subject-select" style="padding:15px 25px; font-size:1.2rem; border-radius:15px; background:rgba(255,255,255,0.9); color:#1e2937; border:none;">
+                        <option value="science">Science (Physics + Chemistry + Biology)</option>
+                        <option value="maths">Mathematics</option>
+                    </select>
+                </div>
+                <button onclick="startQuiz()" class="btn-primary" style="margin:30px auto; display:block; font-size:1.3rem;">🚀 Start Quiz (20 Questions)</button>
+            </div>
+
+            <!-- ACTUAL QUIZ -->
+            <div id="quiz-active" style="display:none;">
+                <div class="card question-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <div id="question-counter" style="font-weight:600; font-size:1.1rem;">Question <span id="q-num">1</span>/20</div>
+                        <div class="timer">
+                            <span id="timer">30</span>s
+                        </div>
+                    </div>
+                    
+                    <div class="progress-container">
+                        <div id="progress" class="progress-bar"></div>
+                    </div>
+                    
+                    <h3 id="question-text" style="font-size:1.4rem; line-height:1.5; margin-bottom:25px;"></h3>
+                    
+                    <div id="options" class="options"></div>
+                    
+                    <div style="margin-top:30px; text-align:center;">
+                        <button id="next-btn" onclick="nextQuestion()" class="btn-primary" style="display:none;">Next Question →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULTS SECTION -->
+        <div id="results" class="section">
+            <div class="result card">
+                <h2>Quiz Complete!</h2>
+                <div class="score-circle" id="score-circle">
+                    <div class="score-text" id="final-score">85</div>
+                </div>
+                <p id="result-msg" style="font-size:1.5rem; margin:20px 0;"></p>
+                
+                <button onclick="saveToLeaderboard()" class="btn-primary" style="margin:15px;">Save to Leaderboard</button>
+                <button onclick="restartQuiz()" style="background:#64748b; color:white;">Try Another Quiz</button>
+            </div>
+        </div>
+
+        <!-- MIND MAPS SECTION -->
+        <div id="mindmaps" class="section">
+            <h2 style="text-align:center; margin-bottom:30px;">Chapter-wise Mind Maps</h2>
+            <div class="mindmap-grid">
+                <!-- Physics -->
+                <div class="accordion">
+                    **Summary:**
+📐 Physics
+                        <div style="padding:20px; line-height:1.8;">
+                            <h4>Class 9 - Motion</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Distance vs Displacement</li>
+                                <li>Uniform & Non-uniform motion</li>
+                                <li>Velocity-Time Graph → Acceleration</li>
+                                <li>3 Equations of Motion</li>
+                            </ul>
+                            <h4>Class 10 - Light</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Reflection & Refraction</li>
+                                <li>Lens Formula: 1/f = 1/v - 1/u</li>
+                                <li>Human Eye & Defects</li>
+                            </ul>
+                            <h4>Class 11 - Units & Measurement</h4>
+                            <ul style="margin-left:20px;">
+                                <li>SI Units & Dimensions</li>
+                                <li>Significant Figures</li>
+                            </ul>
+                        </div>
+                </div>
+                
+                <!-- Chemistry -->
+                <div class="accordion">
+                    **Summary:**
+🧪 Chemistry
+                        <div style="padding:20px; line-height:1.8;">
+                            <h4>Class 9 - Matter</h4>
+                            <ul style="margin-left:20px;">
+                                <li>States of Matter & Characteristics</li>
+                                <li>Colloids vs Suspension</li>
+                                <li>Separation Techniques</li>
+                            </ul>
+                            <h4>Class 10 - Chemical Reactions</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Types: Combination, Decomposition</li>
+                                <li>Balancing Equations</li>
+                                <li>Oxidation & Reduction</li>
+                            </ul>
+                        </div>
+                </div>
+                
+                <!-- Biology -->
+                <div class="accordion">
+                    **Summary:**
+🧬 Biology
+                        <div style="padding:20px; line-height:1.8;">
+                            <h4>Class 9 - Cell</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Prokaryotic vs Eukaryotic</li>
+                                <li>Cell Organelles & Functions</li>
+                                <li>Mitochondria - Powerhouse</li>
+                            </ul>
+                            <h4>Class 10 - Life Processes</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Nutrition, Respiration, Transportation</li>
+                                <li>Control & Coordination</li>
+                            </ul>
+                        </div>
+                </div>
+                
+                <!-- Maths -->
+                <div class="accordion">
+                    **Summary:**
+📊 Mathematics
+                        <div style="padding:20px; line-height:1.8;">
+                            <h4>Class 9 - Number System</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Rational & Irrational Numbers</li>
+                                <li>Laws of Exponents</li>
+                            </ul>
+                            <h4>Class 10 - Quadratic Equations</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Factorisation Method</li>
+                                <li>Discriminant D = b²-4ac</li>
+                            </ul>
+                            <h4>Class 11 - Sets & Relations</h4>
+                            <ul style="margin-left:20px;">
+                                <li>Types of Sets</li>
+                                <li>Venn Diagrams</li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD SECTION -->
+        <div id="leaderboard" class="section">
+            <h2 style="text-align:center; margin-bottom:30px;">🏆 Global Leaderboard</h2>
+            <div class="card">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Class</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFETTI CANVAS -->
+    <canvas id="confetti" class="confetti-canvas"></canvas>
+
+    <script>
+        // ====================== REAL CBSE QUESTIONS ======================
+        // Class 9 Science (50+ real CBSE-level from verified sources)
+        let class9Science = [
+            {"question": "If the displacement of an object is proportional to the square of time, then the object moves with:", "options": ["uniform velocity", "uniform acceleration", "increasing acceleration", "decreasing acceleration"], "correct": 1},
+            {"question": "The distance time graph of a body coincides with its time axis. The body must be:", "options": ["in uniform motion", "at rest", "in uniformly accelerated motion", "in zig-zag motion"], "correct": 1},
+            {"question": "The velocity time graph of a body is parallel to the time axis. The body is:", "options": ["at rest", "having uniform acceleration", "having zero acceleration", "having non-uniform acceleration"], "correct": 2},
+            {"question": "A particle is moving in a circular path of radius r. The displacement after half a circle would be:", "options": ["Zero", "π r", "2 r", "2π r"], "correct": 0},
+            {"question": "The numerical ratio of displacement to distance for a moving object is:", "options": ["always less than 1", "always equal to 1", "always more than 1", "equal or less than 1"], "correct": 3},
+            {"question": "Suppose a boy is enjoying a ride on a merry-go-round which is moving with a constant speed of 10 m/s. It implies that the boy is:", "options": ["at rest", "moving with no acceleration", "in accelerated motion", "moving with uniform velocity"], "correct": 2},
+            {"question": "Area under a v – t graph represents a physical quantity which has the unit:", "options": ["m²", "m", "m³", "m/s"], "correct": 1},
+            {"question": "Slope of a velocity – time graph gives:", "options": ["the distance", "the displ
